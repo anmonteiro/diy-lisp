@@ -14,7 +14,16 @@ def parse(source):
     """Parse string representation of one *single* expression
     into the corresponding Abstract Syntax Tree."""
 
-    raise NotImplementedError("DIY")
+    source = remove_comments(source)
+    source = split_exps(source)
+    if re.search('\S', source[0]):
+        return str(source[0])
+    elif re.search('#[tf]', source[0]):
+        return str(source[0]) == "#t"
+
+
+
+    #raise NotImplementedError("DIY")
 
 ##
 ## Below are a few useful utility functions. These should come in handy when 
