@@ -17,9 +17,7 @@ def parse(source):
     source = remove_comments(source)
     source = split_exps(source)
     if re.search('\S', source[0]):
-        return str(source[0])
-    elif re.search('#[tf]', source[0]):
-        return str(source[0]) == "#t"
+        return (str(source[0]) == "#t")if re.search('#[tf]', source[0]) else str(source[0])
 
 
 
