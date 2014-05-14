@@ -13,10 +13,16 @@ understand.
 def parse(source):
     """Parse string representation of one *single* expression
     into the corresponding Abstract Syntax Tree."""
-
+    print source
     source = remove_comments(source)
+    print source
     source = split_exps(source)
-    if re.search('\S', source[0]):
+    print source
+    size = len(source)
+
+    if source[0].isdigit():
+        return int(source[0])
+    elif re.search('\S', source[0]):
         return (str(source[0]) == "#t")if re.search('#[tf]', source[0]) else str(source[0])
 
 
