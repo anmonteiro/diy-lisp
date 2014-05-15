@@ -13,19 +13,22 @@ understand.
 def parse(source):
     """Parse string representation of one *single* expression
     into the corresponding Abstract Syntax Tree."""
-    print source
+    #print source
     source = remove_comments(source)
+    source = source.strip()
     idx = 0
 
     if source[idx] == "(":
         dest = find_matching_paren(source, idx)
+        if dest != (len(source)-1):
+            raise LispError("Expected EOF")
         idx += 1
         source = source[idx:dest]
         source = split_exps(source)
-        return source
+        print source
+        return [parse(atom) for atom in source]
         #source, rest = first_expression(source)
         print source
-        
     #size = len(source)
 
     if source == "#t":
@@ -34,6 +37,8 @@ def parse(source):
         return False
     elif source.isdigit():
         return int(source)
+    elif source[idx] == "'":
+        return ["quote", parse(source[idx+1:])]
     else:
         return source
 
