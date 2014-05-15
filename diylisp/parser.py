@@ -15,8 +15,17 @@ def parse(source):
     into the corresponding Abstract Syntax Tree."""
     print source
     source = remove_comments(source)
-    print source
-    #source = split_exps(source)
+    idx = 0
+
+    if source[idx] == "(":
+        dest = find_matching_paren(source, idx)
+        idx += 1
+        source = source[idx:dest]
+        source = split_exps(source)
+        return source
+        #source, rest = first_expression(source)
+        print source
+        
     #size = len(source)
 
     if source == "#t":
