@@ -13,7 +13,6 @@ understand.
 def parse(source):
     """Parse string representation of one *single* expression
     into the corresponding Abstract Syntax Tree."""
-    #print source
     source = remove_comments(source)
     source = source.strip()
     idx = 0
@@ -27,9 +26,7 @@ def parse(source):
         source = split_exps(source)
         print source
         return [parse(atom) for atom in source]
-        #source, rest = first_expression(source)
         print source
-    #size = len(source)
 
     if source == "#t":
         return True
