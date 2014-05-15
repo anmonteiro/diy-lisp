@@ -16,15 +16,17 @@ def parse(source):
     print source
     source = remove_comments(source)
     print source
-    source = split_exps(source)
-    print source
-    size = len(source)
+    #source = split_exps(source)
+    #size = len(source)
 
-    if source[0].isdigit():
-        return int(source[0])
-    elif re.search('\S', source[0]):
-        return (str(source[0]) == "#t")if re.search('#[tf]', source[0]) else str(source[0])
-
+    if source == "#t":
+        return True
+    elif source == "#f":
+        return False
+    elif source.isdigit():
+        return int(source)
+    else:
+        return source
 
 
     #raise NotImplementedError("DIY")
