@@ -16,4 +16,17 @@ in a day, after all.)
 
 def evaluate(ast, env):
     """Evaluate an Abstract Syntax Tree in the specified environment."""
-    raise NotImplementedError("DIY")
+    exprs = {
+    	"quote" : lambda ast: ast[1],
+    	"atom" : lambda ast: is_atom(evaluate(ast[1], env)),
+    	"eq" : lambda ast: evaluate(["atom", ast[1]], env) \
+    		and evaluate(["atom", ast[2]], env) \
+    		and evaluate(ast[1], env) == evaluate(ast[2], env)
+    }
+
+    if is_atom(ast):
+    	return ast
+    elif is_list(ast):
+    	print "is list"
+    	print ast
+    	return exprs.get(ast[0], LispError("Unsupported keyword"))(ast)
