@@ -17,27 +17,27 @@ def parse(source):
     source = source.strip()
     idx = 0
 
-    if source[idx] == "(":
-        dest = find_matching_paren(source, idx)
-        if dest != (len(source)-1):
-            raise LispError("Expected EOF")
-        idx += 1
-        source = source[idx:dest]
-        source = split_exps(source)
-        print source
-        return [parse(atom) for atom in source]
-        print source
+    exp, rest = first_expression(source)
 
-    if source == "#t":
+    if rest:
+        raise LispError("Expected EOF")
+
+    if exp == "#t":
         return True
-    elif source == "#f":
+    elif exp == "#f":
         return False
-    elif source.isdigit():
-        return int(source)
-    elif source[idx] == "'":
-        return ["quote", parse(source[idx+1:])]
+    elif exp.isdigit():
+        return int(exp)
+    elif exp[idx] == "(":
+        dest = find_matching_paren(exp, idx)
+        idx += 1
+        exp = exp[idx:dest]
+        exp = split_exps(exp)
+        return [parse(atom) for atom in exp]
+    elif exp[idx] == "'":
+        return ["quote", parse(exp[idx+1:])]
     else:
-        return source
+        return exp
 
 
     #raise NotImplementedError("DIY")
