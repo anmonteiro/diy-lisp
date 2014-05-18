@@ -27,6 +27,25 @@ def evaluate(ast, env):
     if is_atom(ast):
     	return ast
     elif is_list(ast):
-    	print "is list"
-    	print ast
-    	return exprs.get(ast[0], LispError("Unsupported keyword"))(ast)
+    	if ast[0] in ["+", "-", "*", "/", "mod", ">", "<"]:
+    		return eval_math_operators(ast, env)
+    	return exprs.get(ast[0], err_syntax)(ast)
+
+def err_syntax(ast, second=None):
+	raise LispError("Invalid syntax!")
+
+def eval_math_operators(ast, env):
+	exprs = {
+		"+" : lambda a, b: a + b,
+		"-" : lambda a, b: a - b,
+		"*" : lambda a, b: a * b,
+		"/" : lambda a, b: a / b,
+		"mod" : lambda a, b: a % b,
+		">" : lambda a, b: a > b
+	}
+	arg1 = ast[1]
+	arg2 = ast[2]
+	if not(is_integer(arg1)) or not(is_integer(arg2)):
+		raise LispError("Arithmetic operations only work on integers")
+	return exprs.get(ast[0], err_syntax)(arg1, arg2)
+
