@@ -23,12 +23,17 @@ def test_nested_expression():
 def test_basic_if_statement():
     """If statements are the basic control structures.
 
-    The `if` should first evaluate it's first argument. If this evaluates to true, then
+    The `if` should first evaluate its first argument. If this evaluates to true, then
     the second argument is evaluated and returned. Otherwise the third and last argument
     is evaluated and returned instead."""
 
     if_expression = parse("(if #t 42 1000)")
     assert_equals(42, evaluate(if_expression, Environment()))
+    if_expression = parse("(if #f 42 1000)")
+    assert_equals(1000, evaluate(if_expression, Environment()))
+    if_expression = parse("(if #t #t #f)")
+    assert_equals(True, evaluate(if_expression, Environment()))
+
 
 def test_that_only_correct_branch_is_evaluated():
     """The branch of the if statement that is discarded should never be evaluated."""
