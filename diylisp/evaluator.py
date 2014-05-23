@@ -22,14 +22,14 @@ def evaluate(ast, env):
     	"atom" : lambda ast: is_atom(evaluate(ast[1], env)),
     	"eq" : lambda ast: evaluate(["atom", ast[1]], env) \
     		and evaluate(["atom", ast[2]], env) \
-    		and evaluate(ast[1], env) == evaluate(ast[2], env)
+    		and evaluate(ast[1], env) == evaluate(ast[2], env),
+    	"if" : lambda ast: eval_if_statement(ast, env)
     }
+    exprs.update(exprs.fromkeys(math_operators, lambda ast: eval_math_operators(ast, env)))
 
     if is_atom(ast):
     	return ast
     elif is_list(ast):
-    	if ast[0] in math_operators:
-    		return eval_math_operators(ast, env)
     	return exprs.get(ast[0], err_syntax)(ast)
 
 def err_syntax(ast, second=None):
@@ -37,16 +37,27 @@ def err_syntax(ast, second=None):
 
 def eval_math_operators(ast, env):
 	exprs = {
-		"+" : lambda a, b: a + b,
-		"-" : lambda a, b: a - b,
-		"*" : lambda a, b: a * b,
-		"/" : lambda a, b: a / b,
-		"mod" : lambda a, b: a % b,
-		">" : lambda a, b: a > b
+		"+" : lambda a, b: evaluate(a, env) + evaluate(b, env),
+		"-" : lambda a, b: evaluate(a, env) - evaluate(b, env),
+		"*" : lambda a, b: evaluate(a, env) * evaluate(b, env),
+		"/" : lambda a, b: evaluate(a, env) / evaluate(b, env),
+		"mod" : lambda a, b: evaluate(a, env) % evaluate(b, env),
+		">" : lambda a, b: evaluate(a, env) > evaluate(b, env)
 	}
-	arg1 = ast[1]
-	arg2 = ast[2]
+	arg1 = evaluate(ast[1], env)
+	arg2 = evaluate(ast[2], env)
+
 	if not(is_integer(arg1)) or not(is_integer(arg2)):
 		raise LispError("Arithmetic operations only work on integers")
 	return exprs.get(ast[0], err_syntax)(arg1, arg2)
+
+def eval_if_statement(ast, env):
+	if evaluate(ast[1], env) is True:
+		return evaluate(ast[2], env)
+	else:
+		return evaluate(ast[3], env)
+
+
+
+
 
