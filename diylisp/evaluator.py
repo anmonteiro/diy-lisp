@@ -16,6 +16,7 @@ in a day, after all.)
 
 def evaluate(ast, env):
     """Evaluate an Abstract Syntax Tree in the specified environment."""
+    math_operators = ["+", "-", "*", "/", "mod", ">", "<"]
     exprs = {
     	"quote" : lambda ast: ast[1],
     	"atom" : lambda ast: is_atom(evaluate(ast[1], env)),
@@ -27,7 +28,7 @@ def evaluate(ast, env):
     if is_atom(ast):
     	return ast
     elif is_list(ast):
-    	if ast[0] in ["+", "-", "*", "/", "mod", ">", "<"]:
+    	if ast[0] in math_operators:
     		return eval_math_operators(ast, env)
     	return exprs.get(ast[0], err_syntax)(ast)
 
