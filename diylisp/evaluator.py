@@ -26,6 +26,10 @@ def evaluate(ast, env):
     	"if" : lambda ast: eval_if_statement(ast, env),
     	"define" : lambda ast: eval_define(ast, env),
     	"lambda" : lambda ast: eval_lambda(ast, env),
+    	"cons" : lambda ast: eval_cons(ast, env),
+    	"head" : lambda ast: eval_head(ast, env),
+    	"tail" : lambda ast: eval_tail(ast, env),
+    	"empty" : lambda ast: eval_empty(ast, env),
     	"env" : lambda ast: eval_in_env(ast, env)
     }
     exprs.update(exprs.fromkeys(math_operators,
@@ -62,6 +66,9 @@ def err_non_symbol(ast):
 
 def err_not_function(expr):
 	raise LispError("%s is not a function" % unparse(expr))
+
+def err_empty_list(ast):
+	raise LispError("Unexpected empty list")
 
 
 def eval_math_operators(ast, env):
@@ -106,6 +113,7 @@ def eval_lambda(ast, env):
 	result = Closure(env, ast[1], ast[2])
 	return result
 
+
 def eval_closure(ast, env):
 	closure, args = ast[0], ast[1:]
 	body = closure.body
@@ -133,5 +141,23 @@ def eval_in_env(ast, env):
 
 	return eval_closure(args, env) if is_closure(expr) else err_not_function(expr)
 
+# Operations with lists
+def eval_cons(ast, env):
+	result = evaluate(ast[2], env)
+	result[:0] = [evaluate(ast[1], env)]
 
+	return result
+
+def eval_head(ast, env):
+	result = evaluate(ast[1], env)
+	print result
+	return result[0] if len(result) > 0 else err_empty_list(ast)
+
+def eval_tail(ast, env):
+	result = evaluate(ast[1], env)
+	print result
+	return result[1:] if len(result) > 0 else err_empty_list(ast)
+
+def eval_empty(ast, env):
+	return len(evaluate(ast[1], env)) == 0
 
