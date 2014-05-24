@@ -40,8 +40,10 @@ def err_syntax(ast, second = None):
 	raise LispError("Invalid syntax!")
 
 
-def err_num_args(ast):
-	raise LispError("Wrong number of arguments for %s: %d; expected 2" % (ast[0], (len(ast)-1)))
+def validate_num_args(ast, expected_num_args):
+	num_args = len(ast) - 1 # subtract the actual keyword
+	if num_args != expected_num_args:
+		raise LispError("Wrong number of arguments for %s: %d; expected %d" % (ast[0], num_args, expected_num_args))
 
 
 def err_non_symbol(ast):
@@ -73,10 +75,8 @@ def eval_if_statement(ast, env):
 
 
 def eval_define(ast, env):
-	num_args = len(ast)
-	if num_args != 3:
-		err_num_args(ast)
-	elif not(is_symbol(ast[1])):
+	validate_num_args(ast, 2)
+	if not(is_symbol(ast[1])):
 		err_non_symbol(ast)
 
 	new_binding = evaluate(ast[2], env)
