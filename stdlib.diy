@@ -1,8 +1,111 @@
 ;; Some logical operators.
-
 (define not
     (lambda (b)
         (if b #f #t)))
 
 ;; DIY -- Implement the rest of your standard library
 ;; here as part 7 of the workshop.
+
+;; function OR
+(define or
+	(lambda (a b)
+		(if a
+			#t
+			(if b
+				#t
+				#f))))
+
+
+;; function AND
+(define and
+	(lambda (a b)
+		(if a
+			(if b
+				#t
+				#f)
+			#f)))
+
+;; another possible definition for AND
+;; more beautiful since it uses the constructs we already have
+;; depends on not and or being already defined, though
+;(define and
+;	(lambda (a b)
+;		(not (or (not a) (not b)))))
+
+
+;; function XOR
+(define xor
+	(lambda (a b)
+		(not (eq a b))))
+
+;; another possible definition for XOR
+;(define xor
+;	(lambda (a b)
+;		(or (and (not a) b) (and (not b) a))))
+
+
+;; function >=
+(define >=
+	(lambda (a b)
+		(or (> a b) (eq a b))))
+
+
+;; function >=
+(define <=
+	(lambda (a b)
+		(not (> a b))))
+
+
+;; function >=
+(define <
+	(lambda (a b)
+		(and (not (> a b)) (not (eq a b)))))
+
+
+;; function sum
+(define sum
+	(lambda (a)
+		(if (empty a)
+			0
+			(+ (head a) (sum (tail a))))))
+
+
+;; function length
+(define length
+	(lambda (a)
+		(if (empty a)
+			0
+			(+ 1 (length (tail a))))))
+
+
+;; function append
+(define append
+	(lambda (a b)
+		(if (empty a)
+			b
+			(cons (head a) (append (tail a) b)))))
+
+
+;; function filter
+(define filter
+	(lambda (fn lst)
+		(if (empty lst)
+			'()
+			(if (fn (head lst))
+				(cons (head lst) (filter fn (tail lst)))
+				(filter fn (tail lst))))))
+
+
+;; function map
+(define map
+	(lambda (fn lst)
+		(if (empty lst)
+			'()
+			(cons (fn (head lst)) (map fn (tail lst))))))
+
+
+
+
+
+
+

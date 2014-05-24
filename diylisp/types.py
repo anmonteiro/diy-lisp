@@ -28,7 +28,7 @@ class Environment:
 
     def lookup(self, symbol):
         if symbol in self.variables:
-            #use self.variables[symbol] here? what's the difference
+            # use self.variables[symbol] here? what's the difference
             return self.variables.get(symbol)
         else:
             raise LispError("Variable not defined: %s" % symbol)
