@@ -212,7 +212,7 @@ def test_calling_with_wrong_number_of_arguments():
 
     env = Environment()
     evaluate(parse("(define fn (lambda (p1 p2) 'whatwever))"), env)
-    error_msg = "wrong number of arguments, expected 2 got 3"
+    error_msg = "Wrong number of arguments for <closure/2>: 3; expected 2"
     with assert_raises_regexp(LispError, error_msg):
         evaluate(parse("(fn 1 2 3)"), env)
 

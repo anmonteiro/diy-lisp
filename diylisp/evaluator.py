@@ -20,20 +20,29 @@ def evaluate(ast, env):
     exprs = {
     	"quote" : lambda ast: ast[1],
     	"atom" : lambda ast: is_atom(evaluate(ast[1], env)),
-    	"eq" : lambda ast: evaluate(["atom", ast[1]], env) \
-    		and evaluate(["atom", ast[2]], env) \
-    		and evaluate(ast[1], env) == evaluate(ast[2], env),
+    	"eq" : lambda ast: (evaluate(["atom", ast[1]], env) and
+    		evaluate(["atom", ast[2]], env) and
+    		evaluate(ast[1], env) == evaluate(ast[2], env)),
     	"if" : lambda ast: eval_if_statement(ast, env),
-    	"define": lambda ast: eval_define(ast, env)
+    	"define" : lambda ast: eval_define(ast, env),
+    	"lambda" : lambda ast: eval_lambda(ast, env),
+    	"env" : lambda ast: eval_in_env(ast, env)
     }
-    exprs.update(exprs.fromkeys(math_operators, lambda ast: eval_math_operators(ast, env)))
-
+    exprs.update(exprs.fromkeys(math_operators,
+    	lambda ast: eval_math_operators(ast, env)))
+	
     if is_symbol(ast):
     	return env.lookup(ast)
     elif is_atom(ast):
     	return ast
     elif is_list(ast):
-    	return exprs.get(ast[0], err_syntax)(ast)
+    	#if is_closure(ast[0]):
+    	#	return eval_closure(ast, env)
+    	#print ast
+    	#print is_list(ast[0])
+    	expr = ast[0] if not(is_list(ast[0])) else "env"
+
+    	return exprs.get(expr, exprs["env"])(ast)
 
 
 def err_syntax(ast, second = None):
@@ -43,11 +52,16 @@ def err_syntax(ast, second = None):
 def validate_num_args(ast, expected_num_args):
 	num_args = len(ast) - 1 # subtract the actual keyword
 	if num_args != expected_num_args:
-		raise LispError("Wrong number of arguments for %s: %d; expected %d" % (ast[0], num_args, expected_num_args))
+		raise LispError("Wrong number of arguments for %s: %d; expected %d" %
+			(ast[0], num_args, expected_num_args))
 
 
 def err_non_symbol(ast):
 	raise LispError("Found non-symbol for first argument of '%s'" % ast[0])
+
+
+def err_not_function(expr):
+	raise LispError("%s is not a function" % unparse(expr))
 
 
 def eval_math_operators(ast, env):
@@ -82,6 +96,42 @@ def eval_define(ast, env):
 	new_binding = evaluate(ast[2], env)
 	env.set(ast[1], new_binding)
 	return new_binding
+
+
+def eval_lambda(ast, env):
+	# arguments should be type list
+	validate_num_args(ast, 2)
+	if not(is_list(ast[1])):
+		err_syntax(ast)
+	result = Closure(env, ast[1], ast[2])
+	return result
+
+def eval_closure(ast, env):
+	closure, args = ast[0], ast[1:]
+	body = closure.body
+	params = closure.params
+
+	validate_num_args(ast, len(params))
+
+	# evaluate arguments before binding them to parameters
+	args = [evaluate(arg, env) for arg in args]
+	
+	# bind arguments to parameters
+	# for readability reasons, prefer 2 steps instead of:
+	# args = dict(zip(params, [evaluate(arg, env) for arg in args]))
+	args = dict(zip(params, args))
+
+	closure_env = closure.env.extend(args)
+
+	return evaluate(body, closure_env)
+
+
+def eval_in_env(ast, env):
+	args = ast[1:]
+	expr = env.lookup(ast[0]) if is_symbol(ast[0]) else evaluate(ast[0], env)
+	args[:0] = [expr]
+
+	return eval_closure(args, env) if is_closure(expr) else err_not_function(expr)
 
 
 
