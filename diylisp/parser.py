@@ -40,8 +40,6 @@ def parse(source):
         return exp
 
 
-    #raise NotImplementedError("DIY")
-
 ##
 ## Below are a few useful utility functions. These should come in handy when 
 ## implementing `parse`. We don't want to spend the day implementing parenthesis 

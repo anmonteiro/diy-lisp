@@ -23,11 +23,14 @@ def evaluate(ast, env):
     	"eq" : lambda ast: evaluate(["atom", ast[1]], env) \
     		and evaluate(["atom", ast[2]], env) \
     		and evaluate(ast[1], env) == evaluate(ast[2], env),
-    	"if" : lambda ast: eval_if_statement(ast, env)
+    	"if" : lambda ast: eval_if_statement(ast, env),
+    	"define": lambda ast: eval_define(ast, env)
     }
     exprs.update(exprs.fromkeys(math_operators, lambda ast: eval_math_operators(ast, env)))
 
-    if is_atom(ast):
+    if is_symbol(ast):
+    	return env.lookup(ast)
+    elif is_atom(ast):
     	return ast
     elif is_list(ast):
     	return exprs.get(ast[0], err_syntax)(ast)
@@ -57,7 +60,16 @@ def eval_if_statement(ast, env):
 	else:
 		return evaluate(ast[3], env)
 
+def eval_define(ast, env):
+	num_args = len(ast)
+	if num_args != 3:
+		raise LispError("Wrong number of arguments for 'define': %d; expected 2" % (num_args-1))
+	elif not(is_symbol(ast[1])):
+		raise LispError("Found non-symbol for first argument of 'define'")
 
+	new_binding = evaluate(ast[2], env)
+	env.set(ast[1], new_binding)
+	return new_binding
 
 
 
