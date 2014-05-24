@@ -35,8 +35,18 @@ def evaluate(ast, env):
     elif is_list(ast):
     	return exprs.get(ast[0], err_syntax)(ast)
 
-def err_syntax(ast, second=None):
+
+def err_syntax(ast, second = None):
 	raise LispError("Invalid syntax!")
+
+
+def err_num_args(ast):
+	raise LispError("Wrong number of arguments for %s: %d; expected 2" % (ast[0], (len(ast)-1)))
+
+
+def err_non_symbol(ast):
+	raise LispError("Found non-symbol for first argument of '%s'" % ast[0])
+
 
 def eval_math_operators(ast, env):
 	exprs = {
@@ -54,18 +64,20 @@ def eval_math_operators(ast, env):
 		raise LispError("Arithmetic operations only work on integers")
 	return exprs.get(ast[0], err_syntax)(arg1, arg2)
 
+
 def eval_if_statement(ast, env):
 	if evaluate(ast[1], env):
 		return evaluate(ast[2], env)
 	else:
 		return evaluate(ast[3], env)
 
+
 def eval_define(ast, env):
 	num_args = len(ast)
 	if num_args != 3:
-		raise LispError("Wrong number of arguments for 'define': %d; expected 2" % (num_args-1))
+		err_num_args(ast)
 	elif not(is_symbol(ast[1])):
-		raise LispError("Found non-symbol for first argument of 'define'")
+		err_non_symbol(ast)
 
 	new_binding = evaluate(ast[2], env)
 	env.set(ast[1], new_binding)
