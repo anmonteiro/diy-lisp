@@ -25,10 +25,19 @@ class Environment:
         self.variables = variables if variables else {}
 
     def lookup(self, symbol):
-        raise NotImplementedError("DIY")
+        if symbol in self.variables:
+            #use self.variables[symbol] here? what's the difference
+            return self.variables.get(symbol)
+        else:
+            raise LispError("Variable not defined: %s" % symbol)
 
     def extend(self, variables):
-        raise NotImplementedError("DIY")
+        new_bindings = self.variables.copy()
+        new_bindings.update(variables)
+        return Environment(new_bindings)
 
     def set(self, symbol, value):
-        raise NotImplementedError("DIY")
+        if symbol in self.variables:
+            raise LispError("%s is already defined" % symbol)
+        self.variables[symbol] = value
+
