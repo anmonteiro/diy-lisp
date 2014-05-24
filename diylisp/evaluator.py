@@ -52,7 +52,7 @@ def eval_math_operators(ast, env):
 	return exprs.get(ast[0], err_syntax)(arg1, arg2)
 
 def eval_if_statement(ast, env):
-	if evaluate(ast[1], env) is True:
+	if evaluate(ast[1], env):
 		return evaluate(ast[2], env)
 	else:
 		return evaluate(ast[3], env)
