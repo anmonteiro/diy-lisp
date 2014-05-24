@@ -16,7 +16,7 @@ in a day, after all.)
 
 def evaluate(ast, env):
     """Evaluate an Abstract Syntax Tree in the specified environment."""
-    math_operators = ["+", "-", "*", "/", "mod", ">", "<"]
+    math_operators = ["+", "-", "*", "/", "mod", ">"]
     exprs = {
     	"quote" : lambda ast: ast[1],
     	"atom" : lambda ast: is_atom(evaluate(ast[1], env)),
@@ -40,12 +40,7 @@ def evaluate(ast, env):
     elif is_atom(ast):
     	return ast
     elif is_list(ast):
-    	#if is_closure(ast[0]):
-    	#	return eval_closure(ast, env)
-    	#print ast
-    	#print is_list(ast[0])
     	expr = ast[0] if not(is_list(ast[0])) else "env"
-
     	return exprs.get(expr, exprs["env"])(ast)
 
 
@@ -144,18 +139,15 @@ def eval_in_env(ast, env):
 # Operations with lists
 def eval_cons(ast, env):
 	result = evaluate(ast[2], env)
-	result[:0] = [evaluate(ast[1], env)]
 
-	return result
+	return [evaluate(ast[1], env)] + result
 
 def eval_head(ast, env):
 	result = evaluate(ast[1], env)
-	print result
 	return result[0] if len(result) > 0 else err_empty_list(ast)
 
 def eval_tail(ast, env):
 	result = evaluate(ast[1], env)
-	print result
 	return result[1:] if len(result) > 0 else err_empty_list(ast)
 
 def eval_empty(ast, env):
