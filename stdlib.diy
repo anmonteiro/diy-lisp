@@ -64,26 +64,26 @@
 
 ;; function sum
 (define sum
-	(lambda (a)
-		(if (empty a)
+	(lambda (lst)
+		(if (empty lst)
 			0
-			(+ (head a) (sum (tail a))))))
+			(+ (head lst) (sum (tail lst))))))
 
 
 ;; function length
 (define length
-	(lambda (a)
-		(if (empty a)
+	(lambda (lst)
+		(if (empty lst)
 			0
-			(+ 1 (length (tail a))))))
+			(+ 1 (length (tail lst))))))
 
 
 ;; function append
 (define append
-	(lambda (a b)
-		(if (empty a)
-			b
-			(cons (head a) (append (tail a) b)))))
+	(lambda (lst1 lst2)
+		(if (empty lst1)
+			lst2
+			(cons (head lst1) (append (tail lst1) lst2)))))
 
 
 ;; function filter
