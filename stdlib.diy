@@ -90,7 +90,7 @@
 (define filter
 	(lambda (fn lst)
 		(if (empty lst)
-			'()
+			lst
 			(if (fn (head lst))
 				(cons (head lst) (filter fn (tail lst)))
 				(filter fn (tail lst))))))
@@ -100,9 +100,32 @@
 (define map
 	(lambda (fn lst)
 		(if (empty lst)
-			'()
+			lst
 			(cons (fn (head lst)) (map fn (tail lst))))))
 
+
+;; function reverse
+(define reverse
+	(lambda (lst)
+		(if (empty lst)
+			lst
+			(append (reverse (tail lst)) (cons (head lst) '())))))
+
+
+;; function range
+(define range
+	(lambda (a b)
+		(if (> a b)
+			'()
+			(cons a (range (+ a 1) b)))))
+
+
+;; function sort
+(define sort
+	(lambda (lst)
+		(if (empty lst)
+			lst
+			'())))
 
 
 
